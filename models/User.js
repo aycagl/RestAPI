@@ -28,8 +28,19 @@ const userSchema = new mongoose.Schema({
     trash: { type: Number, default: 0 },
     water: { type: Number, default: 0 },
     electricity: { type: Number, default: 0 },
-    transportation: { type: Number, default: 0 }
+    transportation: {
+      type: [
+        {
+          type: { type: String, required: true },
+          distance: { type: Number, required: true },
+          fuel: { type: String, required: true },
+          date: { type: Date, default: Date.now } //default date, today
+        }
+      ],
+      default: [] // Boş bir dizi olarak başlatılmalı
+    }
   }
+  
 });
 
 // Şifreyi hashleyerek kaydet
@@ -41,4 +52,3 @@ userSchema.pre('save', async function (next) {
 });
 
 module.exports = mongoose.model('User', userSchema);
-
