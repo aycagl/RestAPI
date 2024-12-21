@@ -1,9 +1,15 @@
 const express = require('express');
-const { logFoodConsumption } = require('../controllers/consumptionController'); // Kontrolör doğru import edildi mi?
+
+const { logFoodConsumption, logTrashProduction, logWaterConsumption, logElectricityConsumption } = require('../controllers/consumptionController');
+
 const { authenticate } = require('../middleware/authMiddleware'); // Middleware doğru import edildi mi?
 
 const router = express.Router();
 
 router.post('/food', authenticate, logFoodConsumption); // Fonksiyonlar tanımlı mı?
+router.post('/trash', authenticate, logTrashProduction); // Çöp üretimi endpointi
+router.post('/water', authenticate, logWaterConsumption); // Su tüketimi endpointi
+router.post('/electricity', authenticate, logElectricityConsumption); // Elektrik tüketimi endpointi
+  
 
 module.exports = router;
