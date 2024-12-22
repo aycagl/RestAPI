@@ -1,14 +1,5 @@
-const User = require('../models/User');
-
-const calculateCarbonFootprint = async (req, res) => {
+const calculateCarbonFootprint = async (user) => {
     try {
-      const userId = req.user.id;
-  
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "Kullanıcı bulunamadı." });
-      }
-  
       const { food, trash, water, electricity, transportation } = user.stats;
   
       const CO2_FACTORS = {
@@ -38,15 +29,13 @@ const calculateCarbonFootprint = async (req, res) => {
         }
       });
   
-      res.status(200).json({
-        message: "Karbon ayak izi başarıyla hesaplandı.",
-        carbonFootprint: carbonFootprint.toFixed(2),
-      });
+      return carbonFootprint.toFixed(2);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Sunucu hatası." });
+      console.error("Error calculating carbon footprint:", error.message);
+      throw new Error("Failed to calculate carbon footprint.");
     }
   };
   
   module.exports = { calculateCarbonFootprint };
+  
   
