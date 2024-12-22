@@ -111,46 +111,56 @@ const logElectricityConsumption = async (req, res) => {
  
 const logTransportation = async (req, res) => {
   try {
-      const { transportationType, distance, fuelType } = req.body; // Gerekli veriler
+    const { transportationType, distance, fuelType } = req.body; // Gerekli veriler
 
-      // Gelen değerlerin doğruluğunu kontrol edin
-      if (!transportationType || typeof transportationType !== 'string') {
-          return res.status(400).json({ message: 'Geçerli bir transportationType değeri gönderin.' });
-      }
-      if (!distance || typeof distance !== 'number' || isNaN(distance)) {
-          return res.status(400).json({ message: 'Geçerli bir distance değeri gönderin.' });
-      }
-      if (!fuelType || typeof fuelType !== 'string') {
-          return res.status(400).json({ message: 'Geçerli bir fuelType değeri gönderin.' });
-      }
+    // Geçerli taşıma türleri
+    const validTransportationTypes = ["car", "bus", "bike", "walking"];
 
-      const userId = req.user.id; // JWT'den gelen kullanıcı ID
+    // transportationType doğrulaması
+    if (!transportationType || typeof transportationType !== "string" || !validTransportationTypes.includes(transportationType)) {
+      return res.status(400).json({ message: 'Geçerli bir transportationType değeri gönderin. (car, bus, bike, walking)' });
+    }
 
-      const user = await User.findById(userId);
-      if (!user) {
-          return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
-      }
+    // distance doğrulaması
+    if (!distance || typeof distance !== "number" || isNaN(distance) || distance <= 0) {
+      return res.status(400).json({ message: "Geçerli bir distance değeri gönderin. (Pozitif bir sayı olmalı)" });
+    }
 
-      // Taşıma istatistiklerini güncelle
-      if (!user.stats.transportation) {
-          user.stats.transportation = [];
-      }
+    // fuelType doğrulaması (walking ve bike için yakıt türü gereksiz)
+    if (["car", "bus"].includes(transportationType) && (!fuelType || typeof fuelType !== "string")) {
+      return res.status(400).json({ message: "Geçerli bir fuelType değeri gönderin. (car ve bus için zorunlu)" });
+    }
 
-      user.stats.transportation.push({
-          type: transportationType,
-          distance,
-          fuel: fuelType,
-          date: new Date()
-      });
+    const userId = req.user.id; // JWT'den kullanıcı ID
 
-      await user.save();
+    // Kullanıcıyı bul
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+    }
 
-      res.status(200).json({ message: 'Taşıma verileri kaydedildi.', stats: user.stats });
+    // Taşıma istatistiklerini güncelle
+    if (!user.stats.transportation) {
+      user.stats.transportation = [];
+    }
+
+    // Yeni taşıma verisini ekle
+    user.stats.transportation.push({
+      type: transportationType,
+      distance,
+      fuel: transportationType === "walking" || transportationType === "bike" ? null : fuelType, // walking ve bike için fuel null
+      date: new Date(),
+    });
+
+    await user.save();
+
+    res.status(200).json({ message: "Taşıma verileri kaydedildi.", stats: user.stats });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Sunucu hatası.' });
+    console.error(error);
+    res.status(500).json({ message: "Sunucu hatası." });
   }
 };
+
 
 
   module.exports = { logFoodConsumption, logTrashProduction, logWaterConsumption, logElectricityConsumption, logTransportation };
