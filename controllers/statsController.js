@@ -1,3 +1,35 @@
+const User = require('../models/User');
+
+const getUserSummary = async (req, res) => {
+  try {
+    const userId = req.user.id; // JWT'den gelen kullanıcı ID
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
+    }
+
+    // Kullanıcının karbon ayak izi hesaplanır
+    const carbonFootprint = await calculateCarbonFootprint(user);
+
+    // Özet döndürülür
+    res.status(200).json({
+      message: 'Kullanıcı özeti alındı.',
+      summary: {
+        food: user.stats.food,
+        trash: user.stats.trash,
+        water: user.stats.water,
+        electricity: user.stats.electricity,
+        transportation: user.stats.transportation,
+        carbonFootprint, // Hesaplanan karbon ayak izi
+      },
+    });
+  } catch (error) {
+    console.error('Error in getUserSummary:', error.message);
+    res.status(500).json({ message: 'Sunucu hatası.' });
+  }
+};
+
 const calculateCarbonFootprint = async (user) => {
     try {
       const { food, trash, water, electricity, transportation } = user.stats;
@@ -36,6 +68,6 @@ const calculateCarbonFootprint = async (user) => {
     }
   };
   
-  module.exports = { calculateCarbonFootprint };
+  module.exports = { calculateCarbonFootprint, getUserSummary };
   
   

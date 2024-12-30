@@ -10,6 +10,7 @@ const goalRoutes = require('./routes/goalRoutes');
 const consumptionRoutes = require('./routes/consumptionRoutes');
 const statsRoutes = require("./routes/statsRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
+const summaryRoutes = require('./routes/summaryRoutes');
 
 // Çevresel değişkenleri yükle
 dotenv.config();
@@ -36,6 +37,9 @@ app.use('/consumption', consumptionRoutes);
 app.use("/calculate", statsRoutes);
 
 app.use("/recommendations", recommendationRoutes);
+
+app.use('/summary', summaryRoutes);
+
 
 // Sunucuyu çalıştır
 const PORT = process.env.PORT || 5000;
