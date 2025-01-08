@@ -18,7 +18,6 @@ const getUserProfile = async (req, res) => {
         name: user.name,
         email: user.email,
         stats: user.stats, // Kullanıcıya ait tüketim verileri
-        goals: user.goals || null, // Hedefler (varsa)
       },
     });
   } catch (error) {
@@ -105,39 +104,10 @@ const loginUser = async (req, res) => {
     }
 };
 
-const setGoals = async (req, res) => {
-  try {
-      const { userId } = req.params;
-      const { goals } = req.body;
-
-      if (!goals) {
-          return res.status(400).json({ message: 'Goals are required.' });
-      }
-
-      // Veritabanında kullanıcıyı güncelle
-      const user = await User.findById(userId);
-      if (!user) {
-          return res.status(404).json({ message: 'User not found.' });
-      }
-
-      user.goals = goals; // Goals bilgisini kullanıcıya ekleyin
-      await user.save();
-
-      res.status(200).json({
-          message: 'Goals successfully set.',
-          goals: user.goals
-      });
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error.' });
-  }
-};
-
 module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
-  //setGoals,
 };
 
 

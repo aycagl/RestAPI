@@ -1,7 +1,3 @@
-//const morgan = require('morgan');
-//app.use(morgan('dev')); // Gelen istekleri loglar
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -20,7 +16,8 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(express.json());
+// Sadece POST ve PUT istekleri için body-parser kullanılıyor
+app.use(express.json()); // JSON body'leri sadece gereken rotalar için etkinleştir
 
 // Veritabanı bağlantısı
 mongoose.connect(process.env.MONGO_URI, {
@@ -31,17 +28,11 @@ mongoose.connect(process.env.MONGO_URI, {
 
 // Rotayı bağla
 app.use('/users', userRoutes);
-
 app.use('/goals', goalRoutes);
-
 app.use('/consumption', consumptionRoutes);
-
 app.use("/calculate", statsRoutes);
-
 app.use("/recommendations", recommendationRoutes);
-
 app.use('/summary', summaryRoutes);
-
 
 // Sunucuyu çalıştır
 const PORT = process.env.PORT || 5000;

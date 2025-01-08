@@ -18,11 +18,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6 // Şifre için minimum uzunluk
   },
-  goals: {
-    type: Map,
-    of: String, // Örneğin: { "food": "Recycle", "water": "Save water" }
-    default: {}
-  },
   stats: {
     food: { type: Number, default: 0 },
     trash: { type: Number, default: 0 },
