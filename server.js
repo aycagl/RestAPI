@@ -4,13 +4,15 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+
 const userRoutes = require('./routes/userRoutes');
-const goalRoutes = require('./routes/goalRoutes');
 const consumptionRoutes = require('./routes/consumptionRoutes');
 const statsRoutes = require("./routes/statsRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
 const summaryRoutes = require('./routes/summaryRoutes');
+const goalRoutes = require('./routes/goalRoutes');
 
 // Çevresel değişkenleri yükle
 dotenv.config();
