@@ -5,29 +5,27 @@ require('dotenv').config(); // .env dosyasını içe aktar
 
 const getUserProfile = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.params.userId;
+    const user = await User.findById(userId).select('-password'); // Şifreyi hariç tut
 
-    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
     }
 
     res.status(200).json({
       message: 'Kullanıcı profili alındı.',
-      user: {
-        id: user._id,
+      profile: {
         name: user.name,
         email: user.email,
-        goals: user.goals, // Kullanıcı hedefleri
-        stats: user.stats, // Çevresel etki istatistikleri
+        stats: user.stats, // Kullanıcıya ait tüketim verileri
+        goals: user.goals || null, // Hedefler (varsa)
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error in getUserProfile:', error.message);
     res.status(500).json({ message: 'Sunucu hatası.' });
   }
 };
-
 
 
 // Kullanıcı kaydı
