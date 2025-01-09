@@ -13,9 +13,6 @@ router.get('/:userId/profile', authenticate, getUserProfile);
 
 router.get('/summary', authenticate, getUserSummary);
 
-// Hedefleri ayarlamak ve almak için kullanıcı id'si yerine JWT'deki user id'yi kullan
-//router.post('/goals', authenticate, setGoals);  // Burada userId parametresine gerek yok, JWT üzerinden alacağız
-//router.get('/goals', authenticate, getGoals);  // Aynı şekilde
 
 module.exports = router;
 
