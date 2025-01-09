@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const { calculateCarbonFootprint } = require("./statsController");
+const { getNearbyPlaces } = require("../helpers/mapsHelper"); // Helper fonksiyonunu dahil edin
+const axios = require("axios");
 
 const getFoodRecommendations = async (req, res) => {
   try {
@@ -18,17 +20,39 @@ const getFoodRecommendations = async (req, res) => {
     const CO2_FACTORS = { food: 0.5 };
     const foodCarbonFootprint = food * CO2_FACTORS.food;
 
+    // Kullanıcıdan alınan il ve ilçe bilgileri
+    const { city, district } = req.query;
+
+    if (!city || !district) {
+      return res.status(400).json({
+        message: "City and district are required to fetch nearby shelters.",
+      });
+    }
+
+    // Step 1: İl ve İlçeyi Koordinatlara Çevir
+    const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+    const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${district},${city}&key=${GOOGLE_MAPS_API_KEY}`;
+    const geocodeResponse = await axios.get(geocodeUrl);
+    const location = geocodeResponse.data.results[0]?.geometry.location;
+
+    if (!location) {
+      return res.status(404).json({ message: "Location not found." });
+    }
+
+    // Step 2: Yakındaki barınakları al
+    const nearbyShelters = await getNearbyPlaces(
+      location.lat,
+      location.lng,
+      "shelter",
+      5000,
+      "charity"
+    );
+
     // Recommendations for reducing food waste
     const recommendations = [
       "Try composting leftover food.",
       "Use the freezer to store food for a longer time.",
       "Incorporate less consumed foods into your weekly meal plan.",
-    ];
-
-    // Static nearby shelters data
-    const nearbyShelters = [
-      { name: "Hope Shelter", address: "123 Street, Istanbul" },
-      { name: "Life Center", address: "456 Avenue, Ankara" },
     ];
 
     res.status(200).json({
