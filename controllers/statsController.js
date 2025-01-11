@@ -78,15 +78,38 @@ const calculateUserCarbonFootprint = async (req, res) => {
 
     const carbonFootprint = await calculateCarbonFootprint(user);
 
+    const unit = req.body.unit || "kg"; 
+
+    let convertedCarbonFootprint;
+    let unitLabel;
+
+    switch (unit.toLowerCase()) {
+      case "ton":
+        convertedCarbonFootprint = carbonFootprint / 1000; 
+        unitLabel = "ton";
+        break;
+      case "mg":
+      case "miligram":
+        convertedCarbonFootprint = carbonFootprint * 1e6; 
+        unitLabel = "mg";
+        break;
+      case "kg":
+      default:
+        convertedCarbonFootprint = carbonFootprint; 
+        unitLabel = "kg";
+        break;
+    }
+
     res.status(200).json({
       message: "Carbon footprint calculated successfully.",
-      carbonFootprint: `${carbonFootprint} kg CO2`,
+      carbonFootprint: `${convertedCarbonFootprint} ${unitLabel}`,
     });
   } catch (error) {
     console.error("Error calculating user carbon footprint:", error.message);
     res.status(500).json({ message: "Failed to calculate carbon footprint." });
   }
 };
+
 
 module.exports = { getUserSummary, calculateCarbonFootprint, calculateUserCarbonFootprint};
   

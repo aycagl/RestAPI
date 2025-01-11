@@ -41,7 +41,7 @@ const getFoodRecommendations = async (req, res) => {
       location.lng,
       "shelter",
       5000,
-      "charity"
+      "barınak"
     );
 
     const recommendations = [
