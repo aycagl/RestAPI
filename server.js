@@ -12,23 +12,18 @@ const goalRoutes = require('./routes/goalRoutes');
 const mapRoutes = require("./routes/mapRoutes");
 
 
-// Çevresel değişkenleri yükle
 dotenv.config();
 
 const app = express();
 
-// Middleware
-// Sadece POST ve PUT istekleri için body-parser kullanılıyor
-app.use(express.json()); // JSON body'leri sadece gereken rotalar için etkinleştir
+app.use(express.json()); 
 
-// Veritabanı bağlantısı
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
-// Rotayı bağla
 app.use('/users', userRoutes);
 app.use('/goals', goalRoutes);
 app.use('/consumption', consumptionRoutes);
@@ -37,7 +32,6 @@ app.use("/recommendations", recommendationRoutes);
 app.use('/summary', summaryRoutes);
 app.use("/map", mapRoutes);
 
-// Sunucuyu çalıştır
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

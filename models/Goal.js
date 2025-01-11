@@ -7,15 +7,15 @@ const goalSchema = new mongoose.Schema({
     required: true,
   },
   type: {
-    type: String, // 'daily' or 'weekly'
+    type: String, //daily or weekly
     required: true,
   },
   goalData: {
-    food: Number, // hedeflenen yemek atığı (kg)
-    water: Number, // hedeflenen su tüketimi (litre)
-    electricity: Number, // hedeflenen elektrik tüketimi (kWh)
-    transportation: Number, // hedeflenen ulaşım mesafesi (km)
-    carbonFootprint: Number, // hedeflenen karbon ayak izi (kg CO2)
+    food: Number, 
+    water: Number, 
+    electricity: Number, 
+    transportation: Number, 
+    carbonFootprint: Number, 
   },
   createdAt: {
     type: Date,

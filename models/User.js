@@ -4,19 +4,19 @@ const bcrypt = require('bcrypt');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true, // Name alanını zorunlu yapabilirsiniz
+    required: true, 
   },
   email: {
     type: String,
     required: true,
-    unique: true, // Her email eşsiz olmalı
-    lowercase: true, // Email'leri küçük harfe çevir
+    unique: true, 
+    lowercase: true, 
     trim: true
   },
   password: {
     type: String,
     required: true,
-    minlength: 6 // Şifre için minimum uzunluk
+    minlength: 6 
   },
   stats: {
     food: { type: Number, default: 0 },
@@ -29,16 +29,16 @@ const userSchema = new mongoose.Schema({
           type: { type: String, required: true },
           distance: { type: Number, required: true },
           fuel: { type: String, required: true },
-          date: { type: Date, default: Date.now } //default date, today
+          date: { type: Date, default: Date.now } 
         }
       ],
-      default: [] // Boş bir dizi olarak başlatılmalı
+      default: [] 
     }
   }
   
 });
 
-// Şifreyi hashleyerek kaydet
+//hashing for password
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);

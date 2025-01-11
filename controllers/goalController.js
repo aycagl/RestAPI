@@ -1,18 +1,16 @@
-//kullanıcı hedeflerini alma ve veritabanına kaydetme
+//get user goals and save to db
 
 const Goal = require('../models/Goal');
 
 const setGoals = async (req, res) => {
   try {
-    const userId = req.user.id; // JWT'den gelen kullanıcı ID
-    const { type, goalData } = req.body; // hedef tipi (günlük/haftalık) ve hedef verisi
+    const userId = req.user.id; // JWT user ID
+    const { type, goalData } = req.body; 
 
-    // Hedef verisi doğrulaması
     if (!goalData || !goalData.food || !goalData.water || !goalData.electricity || !goalData.transportation || !goalData.carbonFootprint) {
-      return res.status(400).json({ message: 'Geçerli hedef verisi girin.' });
+      return res.status(400).json({ message: 'Please provide valid target data.' });
     }
 
-    // Yeni hedef oluşturuluyor
     const newGoal = new Goal({
       userId,
       type,
@@ -22,33 +20,33 @@ const setGoals = async (req, res) => {
     await newGoal.save();
 
     res.status(201).json({
-      message: 'Hedef başarıyla oluşturuldu.',
+      message: 'Goal successfully created.',
       goal: newGoal,
     });
   } catch (error) {
     console.error('Error in setGoals:', error.message);
-    res.status(500).json({ message: 'Sunucu hatası.' });
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 
 const getGoalsByUserId = async (req, res) => {
   try {
-    console.log('Request Params:', req.params); // Gelen parametreleri kontrol edin
+    console.log('Request Params:', req.params); 
     const { userId } = req.params;
 
     const goals = await Goal.find({ userId });
 
     if (!goals || goals.length === 0) {
-      return res.status(404).json({ message: 'Bu kullanıcı için hedef bulunamadı.' });
+      return res.status(404).json({ message: 'No goals found for this user.' });
     }
 
     res.status(200).json({
-      message: 'Kullanıcı hedefleri başarıyla alındı.',
+      message: 'User goals retrieved successfully.',
       goals,
     });
   } catch (error) {
     console.error('Error in getGoalsByUserId:', error.message);
-    res.status(500).json({ message: 'Sunucu hatası.' });
+    res.status(500).json({ message: 'Server error.' });
   }
 };
 

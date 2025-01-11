@@ -1,7 +1,6 @@
 const { getCoordinates, getNearbyPlaces } = require("../helpers/mapsHelper");
 const axios = require("axios");
 
-// GET /map/shelters - Yakındaki barınakları döndürür
 const getNearbyShelters = async (req, res) => {
   try {
     const { city, district } = req.query;
@@ -36,7 +35,7 @@ const getEcoFriendlyTransport = async (req, res) => {
   
       const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
   
-      // Varsayılan olarak araba (driving) modu ile Directions API çağrısı
+      // Deafault driving modu Directions API call
       const directionsUrl = `https://maps.googleapis.com/maps/api/directions/json`;
       const response = await axios.get(directionsUrl, {
         params: {
@@ -53,12 +52,11 @@ const getEcoFriendlyTransport = async (req, res) => {
   
       const route = response.data.routes[0];
       const steps = route.legs[0].steps.map((step) => ({
-        instruction: step.html_instructions.replace(/<[^>]+>/g, ""), // HTML etiketlerini temizle
+        instruction: step.html_instructions.replace(/<[^>]+>/g, ""), // HTML etiketlerini temizleme
         distance: step.distance.text,
         duration: step.duration.text,
       }));
   
-      // Çevre dostu ulaşım seçenekleri
       const ecoFriendlyOptions = [
         {
           mode: "walking",

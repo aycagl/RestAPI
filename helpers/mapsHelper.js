@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-// İl ve İlçeyi Koordinatlara Çevirir
 const getCoordinates = async (city, district) => {
   const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json`;
   const response = await axios.get(geocodeUrl, {
@@ -21,7 +20,6 @@ const getCoordinates = async (city, district) => {
   return location;
 };
 
-// Koordinatlara Göre Yakındaki Yerleri Bulur
 const getNearbyPlaces = async (lat, lng, keyword = "shelter", radius = 5000, type = "charity") => {
     const placesUrl = `https://maps.googleapis.com/maps/api/place/nearbysearch/json`;
     const response = await axios.get(placesUrl, {

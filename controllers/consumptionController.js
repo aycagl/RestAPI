@@ -4,164 +4,147 @@ const logFoodConsumption = async (req, res) => {
     try {
       const { foodWaste } = req.body;
   
-      // Gelen değerin doğruluğunu kontrol edin
       if (!foodWaste || typeof foodWaste !== 'number' || isNaN(foodWaste)) {
-        return res.status(400).json({ message: 'Geçerli bir foodWaste değeri gönderin.' });
+        return res.status(400).json({ message: 'Please provide a valid foodWaste value.' });
       }
   
       const userId = req.user.id;
   
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
+        return res.status(404).json({ message: 'User not found.' });
       }
   
-      // Gıda atığı puanını artır
       user.stats.food += foodWaste;
       await user.save();
   
-      res.status(200).json({ message: 'Gıda tüketimi kaydedildi.', stats: user.stats });
+      res.status(200).json({ message: 'Food consumption has been recorded.', stats: user.stats });
     } catch (error) {
       console.error('Error in logFoodConsumption:', error.message);
-      res.status(500).json({ message: 'Sunucu hatası.' });
+      res.status(500).json({ message: 'Server error.' });
     }
   };
 
   const logTrashProduction = async (req, res) => {
     try {
-      const { trashAmount } = req.body; // Günlük çöp üretim miktarı
+      const { trashAmount } = req.body; 
 
-      // Gelen değerin doğruluğunu kontrol edin
       if (!trashAmount || typeof trashAmount !== 'number' || isNaN(trashAmount)) {
-        return res.status(400).json({ message: 'Geçerli bir trashAmount değeri gönderin.' });
+        return res.status(400).json({ message: 'Please provide a valid trashAmount value.' });
       }
 
       const userId = req.user.id; // JWT'den gelen kullanıcı ID
   
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
+        return res.status(404).json({ message: 'User not found.' });
       }
   
-      // Kullanıcının çöp üretim istatistiğini artır
       user.stats.trash += trashAmount;
       await user.save();
   
-      res.status(200).json({ message: 'Çöp üretimi kaydedildi.', stats: user.stats });
+      res.status(200).json({ message: 'Food consumption has been recorded.', stats: user.stats });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Sunucu hatası.' });
+      res.status(500).json({ message: 'Server error' });
     }
   };
   
   const logWaterConsumption = async (req, res) => {
     try {
-      const { waterUsage } = req.body; // Su tüketimi verisi
+      const { waterUsage } = req.body; 
 
-      // Gelen değerin doğruluğunu kontrol edin
       if (!waterUsage || typeof waterUsage !== 'number' || isNaN(waterUsage)) {
-        return res.status(400).json({ message: 'Geçerli bir waterUsage değeri gönderin.' });
+        return res.status(400).json({ message: 'Please provide a valid waterUsage value.' });
       }
 
-      const userId = req.user.id; // JWT'den gelen kullanıcı ID
+      const userId = req.user.id; 
   
       const user = await User.findById(userId);
       if (!user) {
-        return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
+        return res.status(404).json({ message: 'User not found.' });
       }
   
-      // Kullanıcının su tüketim istatistiğini artır
       user.stats.water += waterUsage;
       await user.save();
   
-      res.status(200).json({ message: 'Su tüketimi kaydedildi.', stats: user.stats });
+      res.status(200).json({ message: 'Water consumption has been recorded.', stats: user.stats });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Sunucu hatası.' });
+      res.status(500).json({ message: 'Server error' });
     }
   };
 
 
 const logElectricityConsumption = async (req, res) => {
   try {
-    const { electricityUsage } = req.body; // Elektrik tüketimi verisi
+    const { electricityUsage } = req.body; 
 
-    // Gelen değerin doğruluğunu kontrol edin
     if (!electricityUsage || typeof electricityUsage !== 'number' || isNaN(electricityUsage)) {
-      return res.status(400).json({ message: 'Geçerli bir electricityUsage değeri gönderin.' });
+      return res.status(400).json({ message: 'Please provide a valid electricity Usage value.' });
     }
     
-    const userId = req.user.id; // JWT'den gelen kullanıcı ID
+    const userId = req.user.id; 
 
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'Kullanıcı bulunamadı.' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    // Elektrik tüketim puanını artır
     user.stats.electricity += electricityUsage;
     await user.save();
 
-    res.status(200).json({ message: 'Elektrik tüketimi kaydedildi.', stats: user.stats });
+    res.status(200).json({ message: 'Electricity consumption has been recorded', stats: user.stats });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Sunucu hatası.' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
  
 const logTransportation = async (req, res) => {
   try {
-    const { transportationType, distance, fuelType } = req.body; // Gerekli veriler
+    const { transportationType, distance, fuelType } = req.body; 
 
-    // Geçerli taşıma türleri
     const validTransportationTypes = ["car", "bus", "bike", "walking"];
 
-    // transportationType doğrulaması
     if (!transportationType || typeof transportationType !== "string" || !validTransportationTypes.includes(transportationType)) {
-      return res.status(400).json({ message: 'Geçerli bir transportationType değeri gönderin. (car, bus, bike, walking)' });
+      return res.status(400).json({ message: 'Please provide a valid transportation value. (car, bus, bike, walking)' });
     }
 
-    // distance doğrulaması
     if (!distance || typeof distance !== "number" || isNaN(distance) || distance <= 0) {
-      return res.status(400).json({ message: "Geçerli bir distance değeri gönderin. (Pozitif bir sayı olmalı)" });
+      return res.status(400).json({ message: "Please provide a valid distance value. (Must be positive)" });
     }
 
-    // fuelType doğrulaması (walking ve bike için yakıt türü gereksiz)
     if (["car", "bus"].includes(transportationType) && (!fuelType || typeof fuelType !== "string")) {
-      return res.status(400).json({ message: "Geçerli bir fuelType değeri gönderin. (car ve bus için zorunlu)" });
+      return res.status(400).json({ message: "Please provide a valid fuel type value. (mandatory for car and bus)" });
     }
 
-    const userId = req.user.id; // JWT'den kullanıcı ID
+    const userId = req.user.id; 
 
-    // Kullanıcıyı bul
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "Kullanıcı bulunamadı." });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Taşıma istatistiklerini güncelle
     if (!user.stats.transportation) {
       user.stats.transportation = [];
     }
 
-    // Yeni taşıma verisini ekle
     user.stats.transportation.push({
       type: transportationType,
       distance,
-      fuel: transportationType === "walking" || transportationType === "bike" ? null : fuelType, // walking ve bike için fuel null
+      fuel: transportationType === "walking" || transportationType === "bike" ? null : fuelType, 
       date: new Date(),
     });
 
     await user.save();
 
-    res.status(200).json({ message: "Taşıma verileri kaydedildi.", stats: user.stats });
+    res.status(200).json({ message: "Transportation has been recorded.", stats: user.stats });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Sunucu hatası." });
+    res.status(500).json({ message: "Server error." });
   }
 };
-
-
 
   module.exports = { logFoodConsumption, logTrashProduction, logWaterConsumption, logElectricityConsumption, logTransportation };
   

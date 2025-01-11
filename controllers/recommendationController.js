@@ -1,26 +1,23 @@
 const User = require("../models/User");
 const { calculateCarbonFootprint } = require("./statsController");
-const { getNearbyPlaces } = require("../helpers/mapsHelper"); // Helper fonksiyonunu dahil edin
+const { getNearbyPlaces } = require("../helpers/mapsHelper"); 
 const axios = require("axios");
 
 const getFoodRecommendations = async (req, res) => {
   try {
-    const userId = req.user.id; // Authenticated user ID
+    const userId = req.user.id; 
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Total carbon footprint using user object
     const totalCarbonFootprint = await calculateCarbonFootprint(user);
 
-    // Calculate food-specific carbon footprint
     const { food } = user.stats;
     const CO2_FACTORS = { food: 0.5 };
     const foodCarbonFootprint = food * CO2_FACTORS.food;
 
-    // Kullanıcıdan alınan il ve ilçe bilgileri
     const { city, district } = req.query;
 
     if (!city || !district) {
@@ -29,7 +26,7 @@ const getFoodRecommendations = async (req, res) => {
       });
     }
 
-    // Step 1: İl ve İlçeyi Koordinatlara Çevir
+    //cirt name -> coordinates
     const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
     const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${district},${city}&key=${GOOGLE_MAPS_API_KEY}`;
     const geocodeResponse = await axios.get(geocodeUrl);
@@ -39,7 +36,6 @@ const getFoodRecommendations = async (req, res) => {
       return res.status(404).json({ message: "Location not found." });
     }
 
-    // Step 2: Yakındaki barınakları al
     const nearbyShelters = await getNearbyPlaces(
       location.lat,
       location.lng,
@@ -48,7 +44,6 @@ const getFoodRecommendations = async (req, res) => {
       "charity"
     );
 
-    // Recommendations for reducing food waste
     const recommendations = [
       "Try composting leftover food.",
       "Use the freezer to store food for a longer time.",
@@ -70,17 +65,15 @@ const getFoodRecommendations = async (req, res) => {
 
 const getTrashRecommendations = async (req, res) => {
   try {
-    const userId = req.user.id; // Authenticated user ID
+    const userId = req.user.id; 
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Total carbon footprint using user object
     const totalCarbonFootprint = await calculateCarbonFootprint(user);
 
-    // Calculate food-specific carbon footprint
     const { trash } = user.stats;
     const CO2_FACTORS = { trash: 0.7 };
     const trashCarbonFootprint = trash * CO2_FACTORS.trash;
@@ -106,22 +99,19 @@ const getTrashRecommendations = async (req, res) => {
 
 const getWaterRecommendations = async (req, res) => {
   try {
-    const userId = req.user.id; // Authenticated user ID
+    const userId = req.user.id; 
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Total carbon footprint using user object
     const totalCarbonFootprint = await calculateCarbonFootprint(user);
 
-    // Calculate water-specific carbon footprint
     const { water } = user.stats;
     const CO2_FACTORS = { water: 0.003 };
     const waterCarbonFootprint = water * CO2_FACTORS.water;
 
-    // Recommendations for saving water
     const recommendations = [
       "Turn off the tap while brushing your teeth.",
       "Fix leaking faucets immediately.",
@@ -142,22 +132,19 @@ const getWaterRecommendations = async (req, res) => {
 
 const getElectricityRecommendations = async (req, res) => {
   try {
-    const userId = req.user.id; // Authenticated user ID
+    const userId = req.user.id; 
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Total carbon footprint using user object
     const totalCarbonFootprint = await calculateCarbonFootprint(user);
 
-    // Calculate electricity-specific carbon footprint
     const { electricity } = user.stats;
     const CO2_FACTORS = { electricity: 0.85 };
     const electricityCarbonFootprint = electricity * CO2_FACTORS.electricity;
 
-    // Recommendations for saving electricity
     const recommendations = [
       "Unplug devices when not in use.",
       "Switch to energy-efficient LED light bulbs.",
@@ -178,17 +165,15 @@ const getElectricityRecommendations = async (req, res) => {
 
 const getTransportRecommendations = async (req, res) => {
   try {
-    const userId = req.user.id; // Authenticated user ID
+    const userId = req.user.id; 
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    // Total carbon footprint using user object
     const totalCarbonFootprint = await calculateCarbonFootprint(user);
 
-    // Calculate transportation-specific carbon footprint
     const { transportation } = user.stats;
     const CO2_FACTORS = {
       transportation: {
@@ -206,7 +191,6 @@ const getTransportRecommendations = async (req, res) => {
       }
     });
 
-    // Recommendations for eco-friendly transport
     const recommendations = [
       "Consider carpooling to reduce fuel usage.",
       "Switch to public transport whenever possible.",
